@@ -57,7 +57,7 @@ function getFileContentType(fileName) {
 }
 
 const server = http.createServer(async (req, res) => {
-    console.log(req.url)
+    console.log(req.method, req.url)
     // Enable CORS for frontend access
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
@@ -68,8 +68,6 @@ const server = http.createServer(async (req, res) => {
         sendError(res, 405, 'Method Not Allowed');
         return;
     }
-
-    console.log(url)
 
     if (url.pathname === '/') {
         res.writeHead(302, { 'Location': '/index.html' });
