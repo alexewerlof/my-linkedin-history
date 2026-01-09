@@ -1,4 +1,4 @@
-import { WN, WHE } from './node_modules/jj/lib/bundle.js'
+import { h, WN, WHE } from './node_modules/jj/lib/bundle.js'
 
 async function fetchJson(path) {
     const response = await fetch(path)
@@ -27,14 +27,27 @@ for (const share of shares) {
     Visibility: "MEMBER_NETWORK"
     */
     postsEl.append(
-        WHE.fromTag('article').append(
-            WHE.fromTag('a').addClass('header').setAttr('href', decodeURIComponent(share.ShareLink)).setAttr('target', '_blank').append(
-                WHE.fromTag('time').setText(share.Date),
-                share.MediaUrl && WHE.fromTag('div').setText('🖼️ Has Media'),
-                WHE.fromTag('div').setTitle('Visibility').setText(share.Visibility),
+        h('article', null,
+            h('div', { 
+                    class: 'header',
+                },
+                h('a', {
+                        href: decodeURIComponent(share.ShareLink),
+                        target: '_blank',
+                        title: 'Timestamp',
+                    },
+                    h('time', null, share.Date),
+                ),
+                share.MediaUrl && h('div', null, '🖼️ Has Media'),
+                h('div', null, share.Visibility).setTitle('Visibility'),
             ),
-            WHE.fromTag('div').setText(share.ShareCommentary),
-            share.SharedUrl && WHE.fromTag('a').setAttr('href', decodeURIComponent(share.SharedUrl)).setText(`🔗 ${share.SharedUrl}`).setAttr('target', '_blank'),
+            h('div', null).setText(share.ShareCommentary),
+            share.SharedUrl && h('a', {
+                    href: decodeURIComponent(share.SharedUrl),
+                    target: '_blank',
+                },
+                `🔗 ${share.SharedUrl}`
+            ),
         )
     )
 }
