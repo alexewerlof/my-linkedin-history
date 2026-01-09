@@ -9,5 +9,8 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "jj": "^2.0.0"
+  }
 }
