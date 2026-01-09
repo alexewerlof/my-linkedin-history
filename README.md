@@ -17,3 +17,14 @@ This repo basically provides a simple interface to explore the contents of a Lin
 
 - `server.js` creates a tiny node server that unzips the CSV files on the fly
 - `index.html` loads `index.js` which sends a request to get the CSV content in JSON format and render it in the browser
+
+## Docker
+
+You can also run this project using Docker.
+
+1. Build the image: `docker build -t my-linkedin-history .`
+2. Run the container:
+   ```bash
+   docker run -p 3000:3000 -v /path/to/your/linkedin_data.zip:/data.zip linkedin-history --zip /data.zip
+   ```
+   Note: You must use an absolute path for the volume mount (`-v`).
