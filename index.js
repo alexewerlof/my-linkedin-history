@@ -10,7 +10,7 @@ async function fetchJson(path) {
 
 const subtext = WN.byId('subtext')
 subtext.setText('Loading...')
-const shares = await fetchJson('shares.json')
+const shares = await fetchJson('unzip/Shares.csv')
 subtext.setText(`${shares.length} itmes.`)
 
 const postsEl = WN.byId('posts')
