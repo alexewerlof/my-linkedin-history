@@ -119,6 +119,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
     console.log(`Serving zip file: ${zipPath}`);
+    console.log(`Open http://localhost:${port}`);
 });
