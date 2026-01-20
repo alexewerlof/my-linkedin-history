@@ -396,7 +396,19 @@ const render = {
             }, follow.FullName),
         )
     },
-    
+    ['Logins']: function renderLogin(login) {
+        /*
+        Login Date,IP Address,User Agent,Login Type
+        */
+        return h('article', null,
+            h('div', { class: 'header' },
+                h('time', null, login['Login Date']),
+                h('span', null, login['Login Type']),
+            ),
+            h('code', null, login['IP Address']),
+            h('div', null, login['User Agent']),
+        )
+    },
 }
 
 async function showFile(name) {
