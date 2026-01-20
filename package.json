@@ -11,6 +11,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
+    "csv-parse": "^6.1.0",
     "jj": "^2.0.0"
   }
 }
