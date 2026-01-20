@@ -409,6 +409,17 @@ const render = {
             h('div', null, login['User Agent']),
         )
     },
+    ['Ads Clicked']: function renderAdClick(adClick) {
+        /*
+        Ad clicked Date,Ad Title/Id
+        */
+        return h('article', null,
+            h('div', { class: 'header' },
+                h('time', null, adClick['Ad clicked Date']),
+            ),
+            h('div', null, adClick['Ad Title/Id']),
+        )
+    },
 }
 
 async function showFile(name) {
