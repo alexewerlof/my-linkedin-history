@@ -74,6 +74,30 @@ function reactionToStr(reaction) {
 
 }
 
+function followStatusToIcon(status) {
+    switch (status) {
+        case 'Unfollow':
+            return '💔'
+        case 'Active':
+            return '✅'
+        default:
+            return status
+    }
+}
+
+function personSearchLink(name) {
+    const ret = new URL('https://www.linkedin.com/search/results/people/')
+    ret.searchParams.set('keywords', name)
+    ret.searchParams.set('origin', 'FACETED_SEARCH')
+    return ret.toString()
+}
+
+function globalSearchLink(query) {
+    const ret = new URL('https://www.linkedin.com/search/results/all/')
+    ret.searchParams.set('keywords', query)
+    return ret.toString()
+}
+
 const render = {
     ['Events']: function renderEvent(event) {
         /*
@@ -170,6 +194,23 @@ const render = {
                 h('div', null).setText(comment.Message),
             )
     },
+    ['messages']: function renderMessage(message) {
+        /*
+        CONVERSATION ID,CONVERSATION TITLE,FROM,SENDER PROFILE URL,TO,RECIPIENT PROFILE URLS,DATE,SUBJECT,CONTENT,FOLDER,ATTACHMENTS
+        */
+        return h('article', null,
+            h('div', { class: 'header' },
+                h('time', null, message.DATE),
+                h('span', null,
+                    h('a', { href: message['SENDER PROFILE URL'], target: '_blank' }, message.FROM),
+                    ' ➡️ ',
+                    h('a', { href: message['RECIPIENT PROFILE URLS'], target: '_blank' }, message.TO),
+                ),
+            ),
+            message.SUBJECT && h('div', { style: 'font-weight: bold' }, message.SUBJECT),
+            h('div', null).setText(message.CONTENT),
+        )
+    },
     ['Skills']: function renderSkill(skill) {
         return h('article', null, skill.Name)
     },
@@ -220,7 +261,10 @@ const render = {
         */
         return h('article', null,
             h('div', null, searchQuery['Time']),
-            h('div', null, searchQuery['Search Query']),
+            h('a', {
+                    href: globalSearchLink(searchQuery['Search Query']),
+                    target: '_blank',
+            }, searchQuery['Search Query']),
         )
     },
     ['Saved_Items']: function renderRecord(savedItem) {
@@ -337,7 +381,22 @@ const render = {
             h('div', null, recommendation['Text']),
         )
     },
-
+    ['Member_Follows']: function renderMemberFollows(follow) {
+        /*
+        Date,Status,FullName
+        */
+        return h('article', null,
+            h('div', { class: 'header' },
+                h('time', null, follow.Date),
+                h('span', null, followStatusToIcon(follow.Status)),
+            ),
+            h('a', {
+                    href: personSearchLink(follow.FullName),
+                    target: '_blank',
+            }, follow.FullName),
+        )
+    },
+    
 }
 
 async function showFile(name) {
