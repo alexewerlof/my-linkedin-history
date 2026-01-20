@@ -111,6 +111,11 @@ const server = http.createServer(async (req, res) => {
     const fileName = decodeURIComponent(url.pathname.slice(unzipPrefix.length));
     const filePath = join(dataPath, fileName);
 
+    if (!fs.existsSync(filePath)) {
+        sendError(res, 404, 'File not found');
+        return;
+    }
+
     try {
         const records = [];
         // Use the existing lib/csv.js to parse the file from cache
