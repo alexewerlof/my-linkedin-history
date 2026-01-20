@@ -26,6 +26,19 @@ function eventStatusToStr(status) {
     }
 }
 
+function securityChallengeTypeToStr(securityChallengeType) {
+    switch (securityChallengeType) {
+        case 'LINKEDIN_APP_CHALLENGE':
+            return '📱'
+        case 'TWO_STEP_VERIFICATION_AUTHENTICATOR_APP':
+            return '🔐'
+        case 'SSP_BLOCKING_CHALLENGE':
+            return '🚫'
+        default:
+            return securityChallengeType
+    }
+}
+
 const render = {
     ['Events']: function renderEvent(event) {
         /*
@@ -145,6 +158,52 @@ const render = {
             ),
         )
     },
+    ['Security Challenges']: function renderRecord(securityChallenge) {
+        /*
+        "Challenge Date": "Wed Mar 06 21:40:33 UTC 2022",
+        "IP Address": "2000:aaaa:1494:5555:bcbc:6a4a:bb55:efef",
+        "User Agent": "LIAuthLibrary:0.0.3 com.linkedin.android:4.1",
+        "Country": "Boratestan",
+        "Challenge Type": "TWO_STEP_VERIFICATION_AUTHENTICATOR_APP"
+        */
+        return h('article', null,
+            h('div', null, securityChallenge['Challenge Date']),
+            h('code', null, securityChallenge['IP Address']),
+            h('div', null, 
+                h('span', {
+                    title: `Challenge Type: ${securityChallenge['Challenge Type']}`,
+                }, securityChallengeTypeToStr(securityChallenge['Challenge Type'])),
+                h('span', null, securityChallenge['Country']),
+            ),
+            h('div', null, securityChallenge['User Agent']),
+        )    
+    },
+    ['SearchQueries']: function renderRecord(searchQuery) {
+        /*
+        "Time": "2025/11/22 10:10:23 UTC",
+        "Search Query": "staff engineer"
+        */
+        return h('article', null,
+            h('div', null, searchQuery['Time']),
+            h('div', null, searchQuery['Search Query']),
+        )
+    },
+    ['Saved_Items']: function renderRecord(savedItem) {
+        /*
+        "savedItem": "https://www.linkedin.com/feed/update/urn:li:activity:7402749450877915138",
+        "CreatedTime": "2025-12-05 18:03:08"
+        */
+        return h('article', null,
+            h('div', null, savedItem['CreatedTime']),
+            h('a', {
+                    href: savedItem['savedItem'],
+                    target: '_blank',
+                },
+                savedItem['savedItem']
+            ),
+        )
+    },
+
 }
 
 async function showFile(name) {
@@ -172,4 +231,3 @@ byId('file-list').mapAppend(Object.keys(render), (name) => {
         showFile(event.target.dataset.key).catch(err => status.setText(err.message))
     })
 })
-
