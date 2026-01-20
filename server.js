@@ -1,7 +1,7 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import { URL } from 'node:url';
-import { extname } from 'node:path';
+import { extname, join } from 'node:path';
 import { parse } from './lib/csv.js';
 
 // Parse command line arguments
@@ -12,7 +12,7 @@ function getArg(flag) {
     return index !== -1 && args[index + 1] ? args[index + 1] : null;
 }
 
-const zipPath = getArg('--zip');
+const dataPath = getArg('--path');
 const port = getArg('--port') || 3000;
 // White list which files to serve
 const fileAllowList = [
@@ -22,13 +22,23 @@ const fileAllowList = [
     'node_modules/jj/lib/bundle.js',
 ]
 
-if (!zipPath) {
-    console.error('Usage: node server.js --zip <path_to_zip_file> [--port <port>]');
+if (!dataPath) {
+    console.error('Usage: node server.js --path <path_to_data> [--port <port>]');
     process.exit(1);
 }
 
-if (!fs.existsSync(zipPath)) {
-    console.error(`Error: File not found: ${zipPath}`);
+if (!fs.existsSync(dataPath)) {
+    console.error(`Error: Path not found: ${dataPath}`);
+    process.exit(1);
+}
+
+if (!fs.statSync(dataPath).isDirectory()) {
+    console.error(`Error: Path is not a directory: ${dataPath}`);
+    process.exit(1);
+}
+
+if (!fs.existsSync(join(dataPath, 'Shares.csv'))) {
+    console.error(`Error: Directory does not contain Shares.csv: ${dataPath}`);
     process.exit(1);
 }
 
@@ -98,12 +108,13 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
-    const filePath = url.pathname.slice(unzipPrefix.length);
+    const fileName = decodeURIComponent(url.pathname.slice(unzipPrefix.length));
+    const filePath = join(dataPath, fileName);
 
     try {
         const records = [];
-        // Use the existing lib/csv.js to parse the file from zip
-        for await (const record of parse(zipPath, filePath)) {
+        // Use the existing lib/csv.js to parse the file from cache
+        for await (const record of parse(filePath)) {
             records.push(record);
         }
 
@@ -111,12 +122,12 @@ const server = http.createServer(async (req, res) => {
     } catch (err) {
         console.error('Error processing file:', err);
         // Check if error is due to file not found in zip
-        const statusCode = err.message.includes('not found in zip') ? 404 : 500;
+        const statusCode = err.code === 'ENOENT' ? 404 : 500;
         sendError(res, statusCode, err.message);
     }
 });
 
 server.listen(port, () => {
-    console.log(`Serving zip file: ${zipPath}`);
+    console.log(`Serving data from: ${dataPath}`);
     console.log(`Open http://localhost:${port}`);
 });
