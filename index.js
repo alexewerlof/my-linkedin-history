@@ -71,7 +71,15 @@ function reactionToStr(reaction) {
         default:
             return '❓' + reaction
     }
+}
 
+function endorsementStatusToStr(status) {
+    switch (status) {
+        case 'ACCEPTED':
+            return '✅'
+        default:
+            return status
+    }
 }
 
 function followStatusToIcon(status) {
@@ -418,6 +426,45 @@ const render = {
                 h('time', null, adClick['Ad clicked Date']),
             ),
             h('div', null, adClick['Ad Title/Id']),
+        )
+    },
+    ['Endorsement_Given_Info']: function renderEndorsement(endorsement) {
+        /*
+        Endorsement Date,Skill Name,Endorsee First Name,Endorsee Last Name,Endorsee Public Url,Endorsement Status
+        */
+        const name = [endorsement['Endorsee First Name'], endorsement['Endorsee Last Name']].filter(Boolean).join(' ')
+        let url = endorsement['Endorsee Public Url']
+        if (url && !url.startsWith('http')) {
+            url = 'https://' + url
+        }
+
+        return h('article', null,
+            h('div', { class: 'header' },
+                h('time', null, endorsement['Endorsement Date']),
+                h('span', null, endorsementStatusToStr(endorsement['Endorsement Status'])),
+            ),
+            h('div', null, 
+                'Endorsed ',
+                url ? h('a', { href: url, target: '_blank' }, name) : name,
+                ' for ',
+                h('strong', null, endorsement['Skill Name'])
+            )
+        )
+    },
+    ['ImportedContacts']: function renderContact(contact) {
+        /*
+        FirstName,MiddleName,LastName,MaidenName,NickName,NamePrefix,NameSuffix,Title,Emails,PhoneNumbers,CreatedAt,UpdatedAt,CountryCode,RegionCode,ThirdPartyVerified,Location
+        */
+        const name = [contact.FirstName, contact.MiddleName, contact.LastName].filter(Boolean).join(' ') || 'No Name'
+
+        return h('article', null,
+            h('div', { class: 'header' },
+                h('time', null, contact.CreatedAt),
+            ),
+            h('strong', null, name),
+            contact.Title && h('div', null, contact.Title),
+            contact.Emails && h('div', null, `📧 ${contact.Emails}`),
+            contact.PhoneNumbers && h('div', null, `📱 ${contact.PhoneNumbers}`),
         )
     },
 }
