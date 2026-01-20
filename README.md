@@ -1,22 +1,19 @@
 # My LinkedIn History
 
-Ever wanted to search your post history but found the LinkedIn UI (site or mobile app) completely useless?
+Ever wanted to search your LinkedIn post history but found the LinkedIn UI (site or mobile app) completely useless?
 
-Now you can! 🎉
+Now you can do that! 🎉
 
 This repo basically provides a simple interface to explore the contents of a LinkedIn data take out zip file.
 
 ## How to use it
 
 - [Download your full LinkedIn data](https://www.linkedin.com/help/linkedin/answer/a1339364/downloading-your-account-data) and put it somewhere in your computer (it usually takes a few days till you get the full archive in `.zip` format)
-- Run the server: `node server.js --zip <path_to_your_zip_file> [--port <port>]`
-- Open the web page that it prints and see all your posts in one page
-- To search this page, use the browser's standard search function
+- Run the app and open the local web page that it prints
 
-## How does it work?
+Now you see all your posts in one page.
 
-- `server.js` creates a tiny node server that unzips the CSV files on the fly
-- `index.html` loads `index.js` which sends a request to get the CSV content in JSON format and render it in the browser
+To search this page, use the browser's standard search function.
 
 # How to run it
 
@@ -28,7 +25,7 @@ git clone git@github.com:alexewerlof/my-linkedin-history.git
 # Install dependencies
 npm ci
 # Run the server
-node server.js --zip <path_to_your_zip_file> [--port <port>]
+node server.js --zip </path/to/your/linkedin_data.zip> [--port <port>]
 ```
 
 ## Docker
@@ -39,7 +36,7 @@ You can also run this project using Docker.
 # Build the image
 docker build -t my-linkedin-history .
 # Run the container ()
-docker run --name linkedin-history -p 3000:3000 -v /path/to/your/linkedin_data.zip:/data.zip linkedin-history --zip /data.zip
+docker run --name linkedin-history -p 3000:3000 -v /absolute/path/to/your/linkedin_data.zip:/data.zip linkedin-history --zip /data.zip
 ```
 
 **Note: You must use an absolute path for the volume mount**
@@ -52,6 +49,11 @@ You can also use Podman.
 # Build the image
 podman build -t my-linkedin-history .
 # Run the container
-podman run --name linkedin-history -p 3000:3000 -v /path/to/your/linkedin_data.zip:/data.zip:Z my-linkedin-history --zip /data.zip
+podman run --name linkedin-history -p 3000:3000 -v /absolute/path/to/your/linkedin_data.zip:/data.zip:Z my-linkedin-history --zip /data.zip
 ```
 **Note: The :Z option is required on SELinux-enabled systems**
+
+## Architecture
+
+- `server.js` creates a tiny node server that unzips the CSV files on the fly
+- `index.html` loads `index.js` which sends a request to get the CSV content in JSON format and render it in the browser
