@@ -1,4 +1,4 @@
-import { h, WN, WHE } from './node_modules/jj/lib/bundle.js'
+import { h, byId } from './node_modules/jj/lib/bundle.js'
 
 async function fetchJson(path) {
     const response = await fetch(path)
@@ -8,12 +8,12 @@ async function fetchJson(path) {
     return response.json()
 }
 
-const subtext = WN.byId('subtext')
+const subtext = byId('subtext')
 subtext.setText('Loading...')
 const shares = await fetchJson('unzip/Shares.csv')
 subtext.setText(`${shares.length} itmes.`)
 
-const postsEl = WN.byId('posts')
+const postsEl = byId('posts')
 for (const share of shares) {
     if (share.Visibility !== 'MEMBER_NETWORK') {
         console.log(share)
