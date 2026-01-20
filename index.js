@@ -39,6 +39,28 @@ function securityChallengeTypeToStr(securityChallengeType) {
     }
 }
 
+function reactionToStr(reaction) {
+    switch (reaction) {
+        case 'ENTERTAINMENT':
+            return '💭'
+        case 'PRAISE':
+            return '👏'
+        case 'LIKE':
+            return '👍'
+        case 'EMPATHY':
+            return '❤️'
+        case 'INTEREST':
+            return '🤔'
+        case 'APPRECIATION':
+            return '🙏🏻'
+        case 'MAYBE':
+            return '🤷'
+        default:
+            return '❓' + reaction
+    }
+
+}
+
 const render = {
     ['Events']: function renderEvent(event) {
         /*
@@ -190,7 +212,7 @@ const render = {
     },
     ['Saved_Items']: function renderRecord(savedItem) {
         /*
-        "savedItem": "https://www.linkedin.com/feed/update/urn:li:activity:7402749450877915138",
+        "savedItem": "https://www.linkedin.com/feed/update/urn:li:activity:9843795379",
         "CreatedTime": "2025-12-05 18:03:08"
         */
         return h('article', null,
@@ -201,6 +223,41 @@ const render = {
                 },
                 savedItem['savedItem']
             ),
+        )
+    },
+    ['Reactions']: function renderRecord(reaction) {
+        /*
+        "Date": "2025-12-15 22:23:37",
+        "Type": "ENTERTAINMENT",
+        "Link": "https://www.linkedin.com/feed/update/urn%3Ali%3Aactivity"
+        */
+        return h('article', null,
+            h('span', null, reactionToStr(reaction.Type)),
+            h('a', {
+                    href: reaction.Link,
+                    target: '_blank',
+                },
+                h('time', null, reaction.Date),
+            ),
+        )
+    },
+    ['Rich_Media']: function renderRichMedia(media) {
+        /*
+        {
+            "Date/Time": "You uploaded a feed document on July 1, 2024 at 9:39 AM (GMT)",
+            "Media Description": "If you're a software developer...",
+            "Media Link": "https://media.licdn.com/..."
+        }
+        */
+        return h('article', null,
+            h('div', { class: 'header' },
+                h('div', null, media['Date/Time'])
+            ),
+            (media['Media Description'] && media['Media Description'] !== '-') ? h('div', null, media['Media Description']) : null,
+            h('a', {
+                href: media['Media Link'],
+                target: '_blank'
+            }, '🔗 View Media')
         )
     },
 
