@@ -39,6 +39,19 @@ function securityChallengeTypeToStr(securityChallengeType) {
     }
 }
 
+function recommendationStatusToIcon(status) {
+    switch (status) {
+        case 'PENDING':
+            return '⏳'
+        case 'VISIBLE':
+            return '✅'
+        case 'HIDDEN':
+            return '❌'
+        default:
+            return status
+    }
+}
+
 function reactionToStr(reaction) {
     switch (reaction) {
         case 'ENTERTAINMENT':
@@ -258,6 +271,70 @@ const render = {
                 href: media['Media Link'],
                 target: '_blank'
             }, '🔗 View Media')
+        )
+    },
+    ['Positions']: function renderRecord(position) {
+        /*
+        "Company Name": "Stealth",
+        "Title": "AI Application Developer",
+        "Description": "Stuff",
+        "Location": "City, City, Country",
+        "Started On": "Aug 2020",
+        "Finished On": ""
+        */
+        return h('article', null,
+            h('h2', null, position['Title']),
+            h('div', null, position['Company Name']),
+            h('div', null,
+                h('time', null, position['Started On']),
+                h('time', null, position['Finished On']),
+            ),
+            h('div', null, position['Location']),
+            h('div', null, position['Description']),
+        )
+    },
+    ['Recommendations_Given']: function renderRecord(recommendation) {
+        /*
+        "First Name": "Jon",
+        "Last Name": "Doe",
+        "Company": "Company name",
+        "Job Title": "Head of Recommendation Office",
+        "Text": "Great person",
+        "Creation Date": " gatekeeping",
+        "Status": " compliance"
+        */
+        return h('article', null,
+            h('time', null, recommendation['Creation Date']),
+            h('div', null,
+                h('span', null, recommendation['First Name']),
+                h('span', null, recommendation['Last Name']),
+            ),
+            h('div', null, recommendation['Company']),
+            h('div', null, recommendation['Job Title']),
+            h('div', null, recommendation['Status']),
+            h('div', null, recommendation['Text']),
+        )
+    },
+    ['Recommendations_Received']: function renderRecord(recommendation) {
+        /*
+        "First Name": "Jon",
+        "Last Name": "Doe",
+        "Company": "Company name",
+        "Job Title": "Head of Recommendation Office",
+        "Text": "Great person",
+        "Creation Date": " gatekeeping",
+        "Status": " compliance"
+        */
+        return h('article', null,
+            h('time', null, recommendation['Creation Date']),
+            h('div', null,
+                h('span', null, recommendation['First Name']),
+                h('span', null, recommendation['Last Name']),
+            ),
+            h('div', null, recommendation['Company']),
+            h('div', null, recommendation['Job Title']),
+            h('div', null, recommendationStatusToIcon(recommendation['Status'])),
+            h('div', null, recommendation['Text']),
         )
     },
 
